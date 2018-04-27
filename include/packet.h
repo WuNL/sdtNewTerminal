@@ -2,6 +2,7 @@
 #define PACKET_H
 #include "stdint.h"
 #include <stdio.h>
+#include "observer.h"
 typedef unsigned int U32;
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 #define UNUSED(expr) do { (void)(expr); } while (0)
@@ -13,7 +14,7 @@ struct pac_param
 struct pac_handle;
 
 
-class packet
+class packet:public observer
 {
 public:
     packet(uint32_t len,uint32_t ssrc)

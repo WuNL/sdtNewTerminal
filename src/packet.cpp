@@ -533,7 +533,7 @@ static int get_next_nalu_hevc(struct pac_handle *handle)
     handle->nalu.data = cur_nalu_ptr + handle->nalu.startcodeprefix_len;    // exclude the start code
     handle->nalu.len = next_ptr - cur_nalu_ptr
                        - handle->nalu.startcodeprefix_len;
-   handle->nalu_type = (handle->nalu.data[0] >> 1) & 0x3F;
+    handle->nalu_type = (handle->nalu.data[0] >> 1) & 0x3F;
 
     return 1;
 }

@@ -19,7 +19,10 @@
 					<Add directory="/opt/intel/mediasdk/include" />
 				</Compiler>
 				<Linker>
-					<Add option="-ljpeg -lmfx -lva -lva-drm -lpthread -lrt -ldl" />
+					<Add option="-ljpeg -lmfx -lva -lva-drm -pthread -lrt -ldl" />
+					<Add library="boost_filesystem" />
+					<Add library="boost_thread" />
+					<Add library="boost_system" />
 					<Add directory="/opt/intel/mediasdk/lib/lin_x64" />
 				</Linker>
 			</Target>
@@ -48,19 +51,30 @@
 		<Unit filename="common/common_utils_linux.cpp" />
 		<Unit filename="common/common_vaapi.cpp" />
 		<Unit filename="common/common_vaapi.h" />
+		<Unit filename="include/asynchronous_socket.h" />
 		<Unit filename="include/boss.h" />
 		<Unit filename="include/capture.h" />
 		<Unit filename="include/encode.h" />
+		<Unit filename="include/msgServer.h" />
 		<Unit filename="include/network.h" />
+		<Unit filename="include/observer.h" />
 		<Unit filename="include/packet.h" />
+		<Unit filename="include/subject.h" />
 		<Unit filename="include/vpp.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/boss.cpp" />
 		<Unit filename="src/capture.cpp" />
 		<Unit filename="src/encode.cpp" />
+		<Unit filename="src/msgServer.cpp" />
 		<Unit filename="src/network.cpp" />
 		<Unit filename="src/packet.cpp" />
 		<Unit filename="src/vpp.cpp" />
+		<Unit filename="tinixml/tinystr.cpp" />
+		<Unit filename="tinixml/tinystr.h" />
+		<Unit filename="tinixml/tinyxml.cpp" />
+		<Unit filename="tinixml/tinyxml.h" />
+		<Unit filename="tinixml/tinyxmlerror.cpp" />
+		<Unit filename="tinixml/tinyxmlparser.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

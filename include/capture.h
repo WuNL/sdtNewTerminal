@@ -20,6 +20,7 @@
 #include <jerror.h>
 #include <sys/timeb.h>
 
+#include "observer.h"
 
 typedef struct
 {
@@ -37,7 +38,7 @@ typedef struct
     buffer_t head;
 } camera_t;
 
-class capture
+class capture:public observer
 {
 public:
     capture();

@@ -3,6 +3,7 @@
 #include "encode.h"
 #include "packet.h"
 #include "network.h"
+#include "msgServer.h"
 using namespace std;
 
 static void usage(CmdOptionsCtx* ctx)
@@ -16,6 +17,10 @@ static void usage(CmdOptionsCtx* ctx)
 
 int main(int argc, char** argv)
 {
+    msgServer ms("127.0.0.1",10086);
+    ms.start();
+
+
     mfxStatus sts = MFX_ERR_NONE;
     bool bEnableInput;  // if true, removes all YUV file reading (which is replaced by pre-initialized surface data). Workload runs for 1000 frames.
     bool bEnableOutput; // if true, removes all output bitsteam file writing and printing the progress
@@ -74,6 +79,7 @@ int main(int argc, char** argv)
     if(options.values.CaptureDevice==MFX_CAPTURE_DEVICE_V4L2)
     {
         capturedevice = new capture;
+        ms.addSubscribe("capture",(observer*)capturedevice);
     }
     else
     {
@@ -142,12 +148,12 @@ int main(int argc, char** argv)
         int pac_len;
         while (pkt->pack_get(&pac_buf, &pac_len) == 1)
         {
-            int ret = net_send(nethandle, pac_buf, pac_len);
-            if (ret != pac_len)
-            {
-                printf("send pack data failed, size: %d, err: %s\n", pac_len,
-                       strerror(errno));
-            }
+//            int ret = net_send(nethandle, pac_buf, pac_len);
+//            if (ret != pac_len)
+//            {
+//                printf("send pack data failed, size: %d, err: %s\n", pac_len,
+//                       strerror(errno));
+//            }
         }
         encoder.mfxBS.DataLength = 0;
 

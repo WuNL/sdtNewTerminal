@@ -1,8 +1,9 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-
 #include <string.h>
+#include "observer.h"
+
 typedef unsigned int U32;
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 #define UNUSED(expr) do { (void)(expr); } while (0)
@@ -57,15 +58,23 @@ int net_send(struct net_handle *handle, void *data, int size);
 int net_recv(struct net_handle *handle, void *data, int size);
 
 
-class network
+class network:public observer
 {
 public:
-    network();
+    network(struct net_param params);
     virtual ~network();
+    struct net_handle *net_open(struct net_param params);
+
+    int net_send(void *data, int size);
+
+    int net_recv(void *data, int size);
+
+    void net_close();
 
 protected:
 
 private:
+    struct net_handle* handle;
 };
 
 #endif // NETWORK_H

@@ -110,14 +110,15 @@
 	"common_vaapi.h"
 	<map>
 
-1524732531 source:/root/intel/workspace/sdtNewTerminal/main.cpp
+1524820759 source:/root/intel/workspace/sdtNewTerminal/main.cpp
 	<iostream>
 	"capture.h"
 	"encode.h"
 	"packet.h"
 	"network.h"
+	"msgServer.h"
 
-1524445075 /root/intel/workspace/sdtNewTerminal/include/capture.h
+1524796257 /root/intel/workspace/sdtNewTerminal/include/capture.h
 	<stdint.h>
 	<stdlib.h>
 	<stdio.h>
@@ -134,6 +135,7 @@
 	<jpeglib.h>
 	<jerror.h>
 	<sys/timeb.h>
+	"observer.h"
 
 1524195184 source:/root/intel/workspace/sdtNewTerminal/src/boss.cpp
 	"boss.h"
@@ -152,11 +154,12 @@
 	<errno.h>
 	<stdlib.h>
 
-1524452513 source:/root/intel/workspace/sdtNewTerminal/src/network.cpp
+1524816220 source:/root/intel/workspace/sdtNewTerminal/src/network.cpp
 	"network.h"
 
-1524452539 /root/intel/workspace/sdtNewTerminal/include/network.h
+1524810539 /root/intel/workspace/sdtNewTerminal/include/network.h
 	<string.h>
+	"observer.h"
 	<stdio.h>
 	<string.h>
 	<stdlib.h>
@@ -166,7 +169,7 @@
 	<arpa/inet.h>
 	<sys/socket.h>
 
-1524745732 source:/root/intel/workspace/sdtNewTerminal/src/packet.cpp
+1524816220 source:/root/intel/workspace/sdtNewTerminal/src/packet.cpp
 	"packet.h"
 	<stdio.h>
 	<stdlib.h>
@@ -176,12 +179,85 @@
 	<sys/timeb.h>
 	<string.h>
 
-1524464215 /root/intel/workspace/sdtNewTerminal/include/packet.h
+1524796288 /root/intel/workspace/sdtNewTerminal/include/packet.h
 	"stdint.h"
 	<stdio.h>
+	"observer.h"
 
 1524193630 source:/root/intel/workspace/sdtNewTerminal/src/vpp.cpp
 	"vpp.h"
 
 1524445078 /root/intel/workspace/sdtNewTerminal/include/vpp.h
+
+1524816221 /root/intel/workspace/sdtNewTerminal/include/observer.h
+	<iostream>
+	<stdio.h>
+
+1524820990 source:/root/intel/workspace/sdtNewTerminal/src/msgServer.cpp
+	"msgServer.h"
+
+1524822183 /root/intel/workspace/sdtNewTerminal/include/msgServer.h
+	<iostream>
+	<pthread.h>
+	<signal.h>
+	"unistd.h"
+	"subject.h"
+	"network.h"
+	<boost/thread/thread.hpp>
+	<boost/thread/mutex.hpp>
+	<boost/thread/tss.hpp>
+	<boost/asio.hpp>
+	<boost/bind.hpp>
+	<boost/smart_ptr.hpp>
+	<boost/optional.hpp>
+	<boost/asio/steady_timer.hpp>
+
+1524816220 /root/intel/workspace/sdtNewTerminal/include/subject.h
+	<iostream>
+	<map>
+	<vector>
+	"observer.h"
+
+1524816220 source:/root/intel/workspace/sdtNewTerminal/tinixml/tinystr.cpp
+	"tinystr.h"
+
+1524816221 /root/intel/workspace/sdtNewTerminal/tinixml/tinystr.h
+	<assert.h>
+	<string.h>
+
+1524816221 source:/root/intel/workspace/sdtNewTerminal/tinixml/tinyxml.cpp
+	<ctype.h>
+	<sstream>
+	<iostream>
+	"tinyxml.h"
+
+1524816220 /root/intel/workspace/sdtNewTerminal/tinixml/tinyxml.h
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<string>
+	<iostream>
+	<sstream>
+	"tinystr.h"
+
+1524816220 source:/root/intel/workspace/sdtNewTerminal/tinixml/tinyxmlerror.cpp
+	"tinyxml.h"
+
+1524816220 source:/root/intel/workspace/sdtNewTerminal/tinixml/tinyxmlparser.cpp
+	<ctype.h>
+	<stddef.h>
+	"tinyxml.h"
+	<windows.h>
+
+1524816340 /root/intel/workspace/sdtNewTerminal/include/asynchronous_socket.h
+	<boost/thread/thread.hpp>
+	<boost/thread/mutex.hpp>
+	<boost/thread/tss.hpp>
+	<boost/asio.hpp>
+	<boost/bind.hpp>
+	<boost/smart_ptr.hpp>
+	<boost/optional.hpp>
+	<boost/asio/steady_timer.hpp>
 
