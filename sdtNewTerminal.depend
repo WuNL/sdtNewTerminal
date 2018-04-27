@@ -1,0 +1,187 @@
+# depslib dependency file v1.0
+1524203361 source:/root/intel/workspace/sdtNewTerminal/common/cmd_options.cpp
+	<stdlib.h>
+	<string.h>
+	"cmd_options.h"
+	"../version.h"
+
+1524203316 /root/intel/workspace/sdtNewTerminal/common/cmd_options.h
+	<stdio.h>
+	"mfxdefs.h"
+	"mfxstructures.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxdefs.h
+	"mfxdispatcherprefixedfunctions.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxdispatcherprefixedfunctions.h
+
+1522139557 /opt/intel/mediasdk/include/mfxstructures.h
+	"mfxcommon.h"
+
+1524203642 /opt/intel/mediasdk/include/mfxcommon.h
+	"mfxdefs.h"
+
+1511309904 /root/intel/workspace/sdtNewTerminal/version.h
+
+1524191230 source:/root/intel/workspace/sdtNewTerminal/common/common_utils.cpp
+	<math.h>
+	"common_utils.h"
+	<array>
+	<vector>
+
+1524215135 /root/intel/workspace/sdtNewTerminal/common/common_utils.h
+	<stdio.h>
+	<stdint.h>
+	"mfxvideo++.h"
+	"mfxjpeg.h"
+	"mfxvp8.h"
+	"mfxplugin.h"
+	"bits/windows_defs.h"
+	"bits/linux_defs.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxvideo++.h
+	"mfxvideo.h"
+	"mfxenc.h"
+	"mfxpak.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxvideo.h
+	"mfxsession.h"
+	"mfxvstructures.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxsession.h
+	"mfxcommon.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxvstructures.h
+	"mfxstructures.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxenc.h
+	"mfxdefs.h"
+	"mfxvstructures.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxpak.h
+	"mfxdefs.h"
+	"mfxvstructures.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxjpeg.h
+	"mfxdefs.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxvp8.h
+	"mfxdefs.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxplugin.h
+	"mfxvideo.h"
+	"mfxaudio.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxaudio.h
+	"mfxsession.h"
+	"mfxastructures.h"
+
+1522139557 /opt/intel/mediasdk/include/mfxastructures.h
+	"mfxcommon.h"
+
+1510603782 /root/intel/workspace/sdtNewTerminal/common/bits/windows_defs.h
+	<windows.h>
+
+1510603782 /root/intel/workspace/sdtNewTerminal/common/bits/linux_defs.h
+	<stdio.h>
+	<string.h>
+	<time.h>
+	<unistd.h>
+
+1523498649 source:/root/intel/workspace/sdtNewTerminal/common/common_utils_linux.cpp
+	"mfxvideo.h"
+	"mfxlinux.h"
+	"common_utils.h"
+	"common_vaapi.h"
+
+1510603782 /root/intel/workspace/sdtNewTerminal/common/common_vaapi.h
+	<stdio.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<new>
+	<stdlib.h>
+	<assert.h>
+	"mfxvideo++.h"
+	"va/va.h"
+	"va/va_drm.h"
+
+1523498659 source:/root/intel/workspace/sdtNewTerminal/common/common_vaapi.cpp
+	"common_vaapi.h"
+	<map>
+
+1524732531 source:/root/intel/workspace/sdtNewTerminal/main.cpp
+	<iostream>
+	"capture.h"
+	"encode.h"
+	"packet.h"
+	"network.h"
+
+1524445075 /root/intel/workspace/sdtNewTerminal/include/capture.h
+	<stdint.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	<fcntl.h>
+	<sys/ioctl.h>
+	<sys/mman.h>
+	<asm/types.h>
+	<linux/videodev2.h>
+	<sys/time.h>
+	<sys/types.h>
+	<unistd.h>
+	<jpeglib.h>
+	<jerror.h>
+	<sys/timeb.h>
+
+1524195184 source:/root/intel/workspace/sdtNewTerminal/src/boss.cpp
+	"boss.h"
+
+1524445079 /root/intel/workspace/sdtNewTerminal/include/boss.h
+
+1524534426 source:/root/intel/workspace/sdtNewTerminal/src/capture.cpp
+	"capture.h"
+
+1524561853 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
+	"encode.h"
+
+1524453483 /root/intel/workspace/sdtNewTerminal/include/encode.h
+	"../common/common_utils.h"
+	"../common/cmd_options.h"
+	<errno.h>
+	<stdlib.h>
+
+1524452513 source:/root/intel/workspace/sdtNewTerminal/src/network.cpp
+	"network.h"
+
+1524452539 /root/intel/workspace/sdtNewTerminal/include/network.h
+	<string.h>
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<sys/socket.h>
+
+1524745732 source:/root/intel/workspace/sdtNewTerminal/src/packet.cpp
+	"packet.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<arpa/inet.h>
+	<sys/timeb.h>
+	<string.h>
+
+1524464215 /root/intel/workspace/sdtNewTerminal/include/packet.h
+	"stdint.h"
+	<stdio.h>
+
+1524193630 source:/root/intel/workspace/sdtNewTerminal/src/vpp.cpp
+	"vpp.h"
+
+1524445078 /root/intel/workspace/sdtNewTerminal/include/vpp.h
+
