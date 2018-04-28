@@ -19,16 +19,16 @@ msgServer::~msgServer()
         free(recv_buff);
 }
 
-void msgServer::addSubscribe(char* topic,observer* ob)
+void msgServer::addSubscribe(string topic,observer* ob)
 {
-    map<char*,vector<observer*> >::iterator it;
+    map<string,vector<observer*> >::iterator it;
     it = topicMap.find(topic);
     //MAP中没有此主题
     if(it==topicMap.end())
     {
         vector<observer*> tmpVec;
         tmpVec.push_back(ob);
-        topicMap.insert(pair<char*,vector<observer*> >(topic,tmpVec));
+        topicMap.insert(pair<string,vector<observer*> >(topic,tmpVec));
     }
     //已经有此主题，那么将该订阅者加入列表
     else
@@ -93,11 +93,9 @@ void msgServer::accept_handler(const boost::system::error_code &ec, sock_ptr soc
 
     char * buff= new char[RECVBUFFSIZE];
     memset(buff,0x00,RECVBUFFSIZE*sizeof(char));
-    sock->async_receive(boost::asio::buffer(buff, RECVBUFFSIZE), boost::bind(&msgServer::on_read,this,buff,_1,_2));
+    sock->async_receive(boost::asio::buffer(buff, RECVBUFFSIZE), boost::bind(&msgServer::on_read,this,buff,_1,_2,sock));
 
-    //异步向客户端发送数据，发送完成时调用write_handler
-    sock->async_write_some(boost::asio::buffer("I heard you!"),
-                           bind(&msgServer::write_handler,this,boost::asio::placeholders::error));
+
     //再次启动异步接受连接
     startrecv();
 }
@@ -107,11 +105,15 @@ void msgServer::write_handler(const boost::system::error_code& err)
     std::cout<<"send msg complete!"<<std::endl;
 }
 
-void msgServer::on_read(char * ptr, const boost::system::error_code & err, std::size_t read_bytes)
+void msgServer::on_read(char * ptr, const boost::system::error_code & err, std::size_t read_bytes,sock_ptr sock)
 {
     printf("recving %d bytes:%s\n",read_bytes,ptr);
     notifyTopic("capture");
     delete[] ptr;
+
+    //异步向客户端发送数据，发送完成时调用write_handler
+    sock->async_write_some(boost::asio::buffer("I heard you!"),
+                           bind(&msgServer::write_handler,this,boost::asio::placeholders::error));
 }
 
 void msgServer::startrecv()

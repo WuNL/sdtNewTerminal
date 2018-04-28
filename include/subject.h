@@ -12,11 +12,11 @@ class subject
 public:
     subject() {}
     virtual ~subject() {}
-    virtual void addSubscribe(char* topic,observer* ob) = 0;
-    virtual void notifyTopic(char* topic) = 0;
+    virtual void addSubscribe(string topic,observer* ob) = 0;
+    virtual void notifyTopic(string topic) = 0;
 protected:
 
-    map<char*,vector<observer*> >  topicMap;
+    map<string,vector<observer*> >  topicMap;
 private:
 
 };

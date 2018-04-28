@@ -16,6 +16,7 @@
 #include <boost/optional.hpp>
 #include <boost/asio/steady_timer.hpp>
 
+using namespace std;
 typedef boost::shared_ptr<boost::asio::ip::tcp::socket> sock_ptr;
 #define RECVBUFFSIZE 1024
 
@@ -24,7 +25,7 @@ class msgServer : public subject
 public:
     msgServer(const char* ip,const int port);
     virtual ~msgServer();
-    void addSubscribe(char* topic,observer* ob);
+    void addSubscribe(string topic,observer* ob);
 
     int start();
     int join();
@@ -37,9 +38,9 @@ public:
 protected:
 
 private:
-    void notifyTopic(char* topic)
+    void notifyTopic(string topic)
     {
-        map<char*,vector<observer*> >::iterator it;
+        map<string,vector<observer*> >::iterator it;
 
 
         for(it=topicMap.begin();it!=topicMap.end();++it)
@@ -47,15 +48,7 @@ private:
             std::cout<<"key: "<<it->first <<std::endl;
         }
 
-        char* s = "capture";
-        std::cout<<topicMap.count(s)<<std::endl;
-
-        for(it=topicMap.begin();it!=topicMap.end();++it)
-        {
-            std::cout<<"key: "<<it->first <<std::endl;
-        }
-
-        it = topicMap.find(s);
+        it = topicMap.find(topic);
         //MAP中没有此主题
         if(it==topicMap.end())
         {
@@ -90,7 +83,7 @@ private:
 
     void write_handler(const boost::system::error_code& err);
 
-    void on_read(char * ptr, const boost::system::error_code & err, std::size_t read_bytes);
+    void on_read(char * ptr, const boost::system::error_code & err, std::size_t read_bytes,sock_ptr sock);
 };
 
 #endif // MSGSERVER_H

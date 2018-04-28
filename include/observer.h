@@ -2,15 +2,15 @@
 #define OBSERVER_H
 #include <iostream>
 #include <stdio.h>
-
+using namespace std;
 class observer
 {
 public:
     observer() {}
     virtual ~observer() {}
-    virtual void update(char* msg)
+    virtual void update(string msg)
     {
-        printf("update!\n");
+        printf("update:%s\n",msg.c_str());
     }
 
 protected:
