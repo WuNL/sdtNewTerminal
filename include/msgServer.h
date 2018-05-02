@@ -6,6 +6,7 @@
 #include "unistd.h"
 #include "subject.h"
 #include "network.h"
+#include "encode.h"
 
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -23,7 +24,7 @@ typedef boost::shared_ptr<boost::asio::ip::tcp::socket> sock_ptr;
 class msgServer : public subject
 {
 public:
-    msgServer(const char* ip,const int port);
+    msgServer(CmdOptions& options);
     virtual ~msgServer();
     void addSubscribe(string topic,observer* ob);
 
@@ -35,15 +36,15 @@ public:
     bool isAlive();
     void run();
 
+
 protected:
 
 private:
-    void notifyTopic(string topic)
+    void notifyTopic(string topic,string msg)
     {
         map<string,vector<observer*> >::iterator it;
 
-
-        for(it=topicMap.begin();it!=topicMap.end();++it)
+        for(it=topicMap.begin(); it!=topicMap.end(); ++it)
         {
             std::cout<<"key: "<<it->first <<std::endl;
         }
@@ -57,12 +58,13 @@ private:
         //已经有此主题，那么将该订阅者加入列表
         else
         {
-            for(int i=0;i<it->second.size();++i)
+            for(int i=0; i<it->second.size(); ++i)
             {
-                it->second[i]->update("test!!!");
+                it->second[i]->update(string(msg));
             }
         }
     };
+    void notifyTopicOfOptions(string topic);
     static void* start_func(void* arg)
     {
         msgServer *ptr = (msgServer*) arg;
@@ -84,6 +86,9 @@ private:
     void write_handler(const boost::system::error_code& err);
 
     void on_read(char * ptr, const boost::system::error_code & err, std::size_t read_bytes,sock_ptr sock);
+
+private:
+    CmdOptions opt;
 };
 
 #endif // MSGSERVER_H

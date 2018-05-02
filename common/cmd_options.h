@@ -49,6 +49,9 @@ struct CmdOptionsValues
     char SourceName[MSDK_MAX_PATH]; // OPTION_FSOURCE
     char SinkName[MSDK_MAX_PATH];   // OPTION_FSINK
 
+    char Ip[MSDK_MAX_PATH];   // IP
+    mfxU16 Port; //Port
+
     mfxU16 Width; // OPTION_GEOMETRY
     mfxU16 Height;
 

@@ -172,6 +172,31 @@ void ParseOptions(int argc, char** argv, CmdOptions* cmd_options)
             cmd_options->values.FrameRateN = (mfxU16)frN;
             cmd_options->values.FrameRateD = (mfxU16)frD;
         }
+        else if((cmd_options->ctx.options & OPTION_FRAMERATE) && !strcmp(argv[i], "-ip"))
+        {
+            if (++i >= argc)
+            {
+                printf("error: no argument for -ip option given\n");
+                exit(-1);
+            }
+            strcpy(cmd_options->values.Ip,argv[i]);
+        }
+        else if((cmd_options->ctx.options & OPTION_FRAMERATE) && !strcmp(argv[i], "-port"))
+        {
+            int port = -1;
+            if (++i >= argc)
+            {
+                printf("error: no argument for -port option given\n");
+                exit(-1);
+            }
+            port = atoi(argv[i]);
+            if (port <= 0)
+            {
+                printf("error: incorrect argument for -f option given\n");
+                exit(-1);
+            }
+            cmd_options->values.Port = (mfxU16)port;
+        }
         else if ((cmd_options->ctx.options & OPTION_MEASURE_LATENCY) && !strcmp(argv[i], "--measure-latency"))
         {
             cmd_options->values.MeasureLatency = true;

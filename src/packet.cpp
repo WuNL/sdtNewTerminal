@@ -195,7 +195,7 @@ packet::~packet()
 
 h264Packet::~h264Packet()
 {
-
+    pack_close();
 }
 
 struct pac_handle * h264Packet::pack_open()
@@ -432,7 +432,7 @@ int h264Packet::pack_get(void **poutbuf, int *outsize)
 
 h265Packet::~h265Packet()
 {
-
+    pack_close();
 }
 
 struct pac_handle * h265Packet::pack_open()
@@ -534,7 +534,10 @@ static int get_next_nalu_hevc(struct pac_handle *handle)
     handle->nalu.len = next_ptr - cur_nalu_ptr
                        - handle->nalu.startcodeprefix_len;
     handle->nalu_type = (handle->nalu.data[0] >> 1) & 0x3F;
-
+    static int fseq = 0;
+    if(handle->nalu_type>=16 && handle->nalu_type<=21)
+        printf("I frame-------type:%d with frame seq %d\n",handle->nalu_type,fseq);
+    fseq++;
     return 1;
 }
 

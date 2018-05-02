@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1524203361 source:/root/intel/workspace/sdtNewTerminal/common/cmd_options.cpp
+1525231578 source:/root/intel/workspace/sdtNewTerminal/common/cmd_options.cpp
 	<stdlib.h>
 	<string.h>
 	"cmd_options.h"
 	"../version.h"
 
-1524203316 /root/intel/workspace/sdtNewTerminal/common/cmd_options.h
+1525230979 /root/intel/workspace/sdtNewTerminal/common/cmd_options.h
 	<stdio.h>
 	"mfxdefs.h"
 	"mfxstructures.h"
@@ -110,13 +110,9 @@
 	"common_vaapi.h"
 	<map>
 
-1524820759 source:/root/intel/workspace/sdtNewTerminal/main.cpp
+1525240405 source:/root/intel/workspace/sdtNewTerminal/main.cpp
 	<iostream>
-	"capture.h"
-	"encode.h"
-	"packet.h"
-	"network.h"
-	"msgServer.h"
+	"videoPipeline.h"
 
 1524796257 /root/intel/workspace/sdtNewTerminal/include/capture.h
 	<stdint.h>
@@ -145,14 +141,13 @@
 1524534426 source:/root/intel/workspace/sdtNewTerminal/src/capture.cpp
 	"capture.h"
 
-1524561853 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
+1525251946 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
 	"encode.h"
 
-1524453483 /root/intel/workspace/sdtNewTerminal/include/encode.h
-	"../common/common_utils.h"
-	"../common/cmd_options.h"
+1525241261 /root/intel/workspace/sdtNewTerminal/include/encode.h
 	<errno.h>
 	<stdlib.h>
+	"observer.h"
 
 1524816220 source:/root/intel/workspace/sdtNewTerminal/src/network.cpp
 	"network.h"
@@ -169,7 +164,7 @@
 	<arpa/inet.h>
 	<sys/socket.h>
 
-1524816220 source:/root/intel/workspace/sdtNewTerminal/src/packet.cpp
+1525251136 source:/root/intel/workspace/sdtNewTerminal/src/packet.cpp
 	"packet.h"
 	<stdio.h>
 	<stdlib.h>
@@ -189,20 +184,23 @@
 
 1524445078 /root/intel/workspace/sdtNewTerminal/include/vpp.h
 
-1524874458 /root/intel/workspace/sdtNewTerminal/include/observer.h
+1525241563 /root/intel/workspace/sdtNewTerminal/include/observer.h
 	<iostream>
 	<stdio.h>
+	"../common/common_utils.h"
+	"../common/cmd_options.h"
 
-1524876273 source:/root/intel/workspace/sdtNewTerminal/src/msgServer.cpp
+1525243684 source:/root/intel/workspace/sdtNewTerminal/src/msgServer.cpp
 	"msgServer.h"
 
-1524876342 /root/intel/workspace/sdtNewTerminal/include/msgServer.h
+1525242330 /root/intel/workspace/sdtNewTerminal/include/msgServer.h
 	<iostream>
 	<pthread.h>
 	<signal.h>
 	"unistd.h"
 	"subject.h"
 	"network.h"
+	"encode.h"
 	<boost/thread/thread.hpp>
 	<boost/thread/mutex.hpp>
 	<boost/thread/tss.hpp>
@@ -212,7 +210,7 @@
 	<boost/optional.hpp>
 	<boost/asio/steady_timer.hpp>
 
-1524874431 /root/intel/workspace/sdtNewTerminal/include/subject.h
+1525227273 /root/intel/workspace/sdtNewTerminal/include/subject.h
 	<iostream>
 	<map>
 	<vector>
@@ -260,4 +258,18 @@
 	<boost/smart_ptr.hpp>
 	<boost/optional.hpp>
 	<boost/asio/steady_timer.hpp>
+
+1525241814 source:/root/intel/workspace/sdtNewTerminal/src/videoPipeline.cpp
+	"videoPipeline.h"
+
+1525241972 /root/intel/workspace/sdtNewTerminal/include/videoPipeline.h
+	<pthread.h>
+	<stdio.h>
+	<errno.h>
+	<stdlib.h>
+	"capture.h"
+	"encode.h"
+	"packet.h"
+	"network.h"
+	"msgServer.h"
 

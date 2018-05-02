@@ -1,9 +1,13 @@
 #ifndef ENCODE_H
 #define ENCODE_H
-#include "../common/common_utils.h"
-#include "../common/cmd_options.h"
+
 #include <errno.h>
 #include <stdlib.h>
+#include "observer.h"
+
+#define CAPTURE_WIDTH 1920
+#define CAPTURE_HEIGHT 1080
+#define CAPTURE_FRAMERATE 30
 
 class encode
 {
@@ -37,6 +41,8 @@ private:
     mfxFrameSurface1** pEncSurfaces;
 
     FILE* fSink;
+
+    bool useVPP;
 };
 
 #endif // ENCODE_H

@@ -13,7 +13,7 @@ public:
     subject() {}
     virtual ~subject() {}
     virtual void addSubscribe(string topic,observer* ob) = 0;
-    virtual void notifyTopic(string topic) = 0;
+    virtual void notifyTopic(string topic,string msg) = 0;
 protected:
 
     map<string,vector<observer*> >  topicMap;

@@ -16,7 +16,8 @@ encode::encode(CmdOptions& options):sts(MFX_ERR_NONE),
         0, 1
     }
 }),
-fSink(NULL)
+fSink(NULL),
+useVPP(false)
 {
     //ctor
 
@@ -43,6 +44,10 @@ encode::~encode()
 
 int encode::init(CmdOptions& options)
 {
+    if(options.values.Bitrate!=CAPTURE_FRAMERATE || options.values.Width!=CAPTURE_WIDTH || options.values.Height!=CAPTURE_HEIGHT)
+        useVPP = true;
+
+
     sts = Initialize(impl, ver, &session, NULL);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
@@ -52,6 +57,11 @@ int encode::init(CmdOptions& options)
     memset(&mfxEncParams, 0, sizeof(mfxEncParams));
 
     mfxEncParams.mfx.CodecId = options.values.CodecId;
+
+    mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
+    mfxEncParams.mfx.GopPicSize = (mfxU16)600;
+    mfxEncParams.mfx.IdrInterval = (mfxU16)1;
+    mfxEncParams.mfx.GopRefDist = (mfxU16)1;
 
     if(mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
     {

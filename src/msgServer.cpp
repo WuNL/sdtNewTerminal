@@ -1,8 +1,9 @@
 #include "msgServer.h"
 
-msgServer::msgServer(const char* ip,const int port):serverep(boost::asio::ip::tcp::v4(),port),acceptor(ios,serverep)
+msgServer::msgServer(CmdOptions& options):serverep(boost::asio::ip::tcp::v4(),10086),acceptor(ios,serverep)
 {
     //ctor
+    opt = options;
     startrecv();
 }
 
@@ -108,7 +109,13 @@ void msgServer::write_handler(const boost::system::error_code& err)
 void msgServer::on_read(char * ptr, const boost::system::error_code & err, std::size_t read_bytes,sock_ptr sock)
 {
     printf("recving %d bytes:%s\n",read_bytes,ptr);
-    notifyTopic("capture");
+
+    if(strcmp(ptr,"1")==0)
+        int i = 0;
+    if(strcmp(ptr,"2")==0)
+        int i = 0;
+
+    notifyTopicOfOptions(string("general"));
     delete[] ptr;
 
     //异步向客户端发送数据，发送完成时调用write_handler
@@ -122,4 +129,30 @@ void msgServer::startrecv()
     //当有连接进入时回调accept_handler函数
     acceptor.async_accept(*sock,
                           boost::bind(&msgServer::accept_handler,this,boost::asio::placeholders::error,sock));
+}
+
+void msgServer::notifyTopicOfOptions(string topic)
+{
+    map<string,vector<observer*> >::iterator it;
+
+
+    for(it=topicMap.begin(); it!=topicMap.end(); ++it)
+    {
+        std::cout<<"key: "<<it->first <<std::endl;
+    }
+
+    it = topicMap.find(topic);
+    //MAP中没有此主题
+    if(it==topicMap.end())
+    {
+        printf("not finded!\n");
+    }
+    //已经有此主题，那么将该订阅者加入列表
+    else
+    {
+        for(int i=0; i<it->second.size(); ++i)
+        {
+            it->second[i]->updateOptions(opt);
+        }
+    }
 }
