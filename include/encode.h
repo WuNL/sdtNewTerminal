@@ -8,6 +8,8 @@
 
 #define CAPTURE_WIDTH 1920
 #define CAPTURE_HEIGHT 1080
+#define MAX_WIDTH 1920
+#define MAX_HEIGHT 1080
 #define CAPTURE_FRAMERATE 30
 
 class encode
@@ -27,6 +29,7 @@ private:
     mfxVersion ver ;
     MFXVideoSession session;
     MFXVideoENCODE* mfxENC;
+    MFXVideoVPP* mfxVPP;
     mfxVideoParam mfxEncParams;
     mfxVideoParam VPPParams;
 
@@ -38,6 +41,8 @@ private:
 
 
     mfxU16 nEncSurfNum ;
+    mfxU16 nSurfNumVPPIn;
+    mfxU16 nSurfNumVPPOutEnc;
 
     mfxU16 width ;
     mfxU16 height ;
@@ -45,6 +50,8 @@ private:
     mfxU32 surfaceSize ;
     mfxU8* surfaceBuffers ;
     mfxFrameSurface1** pEncSurfaces;
+    mfxFrameSurface1** pVPPSurfacesIn;
+    mfxFrameSurface1** pVPPSurfacesOut;
 
     FILE* fSink;
 

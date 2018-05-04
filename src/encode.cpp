@@ -52,10 +52,6 @@ int encode::init(CmdOptions& options)
     sts = Initialize(impl, ver, &session, NULL);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
-    // Create Media SDK encoder
-    mfxENC = new MFXVideoENCODE(session);
-    // Create Media SDK VPP component
-    MFXVideoVPP mfxVPP(session);
 
     memset(&mfxEncParams, 0, sizeof(mfxEncParams));
 
@@ -170,25 +166,24 @@ int encode::init(CmdOptions& options)
     }
 
     // Initialize VPP parameters
-    mfxVideoParam VPPParams;
     memset(&VPPParams, 0, sizeof(VPPParams));
-    // Input data
+    // Input data V4L2
     VPPParams.vpp.In.FourCC = MFX_FOURCC_NV12;
     VPPParams.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
     VPPParams.vpp.In.CropX = 0;
     VPPParams.vpp.In.CropY = 0;
-    VPPParams.vpp.In.CropW = options.values.Width;
-    VPPParams.vpp.In.CropH = options.values.Height;
+    VPPParams.vpp.In.CropW = 1920;
+    VPPParams.vpp.In.CropH = 1080;
     VPPParams.vpp.In.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
-    VPPParams.vpp.In.FrameRateExtN = options.values.FrameRateN;
-    VPPParams.vpp.In.FrameRateExtD = options.values.FrameRateD;
+    VPPParams.vpp.In.FrameRateExtN = 30;
+    VPPParams.vpp.In.FrameRateExtD = 1;
     // width must be a multiple of 16
     // height must be a multiple of 16 in case of frame picture and a multiple of 32 in case of field picture
-    VPPParams.vpp.In.Width = MSDK_ALIGN16(options.values.Width);
+    VPPParams.vpp.In.Width = MSDK_ALIGN16(1920);
     VPPParams.vpp.In.Height =
         (MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.In.PicStruct) ?
-        MSDK_ALIGN16(options.values.Height) :
-        MSDK_ALIGN32(options.values.Height);
+        MSDK_ALIGN16(1080) :
+        MSDK_ALIGN32(1080);
     // Output data
     VPPParams.vpp.Out.FourCC = MFX_FOURCC_NV12;
     VPPParams.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
@@ -207,89 +202,118 @@ int encode::init(CmdOptions& options)
         MSDK_ALIGN16(VPPParams.vpp.Out.CropH) :
         MSDK_ALIGN32(VPPParams.vpp.Out.CropH);
 
-    VPPParams.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+    VPPParams.IOPattern = MFX_IOPATTERN_IN_SYSTEM_MEMORY | MFX_IOPATTERN_OUT_SYSTEM_MEMORY;
 
 
-    // Validate video encode parameters (optional)
-    // - In this example the validation result is written to same structure
-    // - MFX_WRN_INCOMPATIBLE_VIDEO_PARAM is returned if some of the video parameters are not supported,
-    //   instead the encoder will select suitable parameters closest matching the requested configuration
-    sts = mfxENC->Query(&mfxEncParams, &mfxEncParams);
-    MSDK_IGNORE_MFX_STS(sts, MFX_WRN_INCOMPATIBLE_VIDEO_PARAM);
-    MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+    //5. Create Media SDK encoder
+    mfxENC = new MFXVideoENCODE(session);
+    // Create Media SDK VPP component
+    mfxVPP = new MFXVideoVPP(session);
 
-    //4. Query number of required surfaces for encoder
 
+    // Query number of required surfaces for encoder
     memset(&EncRequest, 0, sizeof(EncRequest));
     sts = mfxENC->QueryIOSurf(&mfxEncParams, &EncRequest);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
-    nEncSurfNum = EncRequest.NumFrameSuggested;
+    // Query number of required surfaces for VPP
+    memset(&VPPRequest, 0, sizeof(mfxFrameAllocRequest) * 2);
+    sts = mfxVPP->QueryIOSurf(&VPPParams, VPPRequest);
+    MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
-    if(mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
+    EncRequest.Type |= MFX_MEMTYPE_FROM_VPPOUT;     // surfaces are shared between VPP output and encode input
+
+    // Determine the required number of surfaces for VPP input and for VPP output (encoder input)
+    nSurfNumVPPIn = VPPRequest[0].NumFrameSuggested;
+    nSurfNumVPPOutEnc = EncRequest.NumFrameSuggested + VPPRequest[1].NumFrameSuggested;
+
+    EncRequest.NumFrameSuggested = nSurfNumVPPOutEnc;
+
+
+
+    //4. Allocate surfaces for VPP: In
+    // - Width and height of buffer must be aligned, a multiple of 32
+    // - Frame surface array keeps pointers all surface planes and general frame info
+    width = (mfxU16) MSDK_ALIGN32(MAX_WIDTH);
+    height = (mfxU16) MSDK_ALIGN32(MAX_HEIGHT);
+    mfxU8 bitsPerPixel = 12;        // NV12 format is a 12 bits per pixel format
+    mfxU32 surfaceSize = width * height * bitsPerPixel / 8;
+    mfxU8* surfaceBuffersIn = (mfxU8*) new mfxU8[surfaceSize * nSurfNumVPPIn];
+
+    pVPPSurfacesIn = new mfxFrameSurface1 *[nSurfNumVPPIn];
+    MSDK_CHECK_POINTER(pVPPSurfacesIn, MFX_ERR_MEMORY_ALLOC);
+    for (int i = 0; i < nSurfNumVPPIn; i++)
     {
-        // Allocate surfaces for encoder
-        // - Width and height of buffer must be aligned, a multiple of 32
-        // - Frame surface array keeps pointers all surface planes and general frame info
-        width = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Width);
-        height = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Height);
-        bitsPerPixel = 16;        // NV12 format is a 12 bits per pixel format
-        surfaceSize = width * height * bitsPerPixel / 8 * 1.5;
-        surfaceBuffers = (mfxU8*) new mfxU8[surfaceSize * nEncSurfNum];
-
-        // Allocate surface headers (mfxFrameSurface1) for encoder
-        pEncSurfaces = new mfxFrameSurface1 *[nEncSurfNum];
-        MSDK_CHECK_POINTER(pEncSurfaces, MFX_ERR_MEMORY_ALLOC);
-        for (int i = 0; i < nEncSurfNum; i++)
+        pVPPSurfacesIn[i] = new mfxFrameSurface1;
+        memset(pVPPSurfacesIn[i], 0, sizeof(mfxFrameSurface1));
+        memcpy(&(pVPPSurfacesIn[i]->Info), &(VPPParams.vpp.In), sizeof(mfxFrameInfo));
+        pVPPSurfacesIn[i]->Data.Y = &surfaceBuffersIn[surfaceSize * i];
+        pVPPSurfacesIn[i]->Data.U = pVPPSurfacesIn[i]->Data.Y + width * height;
+        pVPPSurfacesIn[i]->Data.V = pVPPSurfacesIn[i]->Data.U + 1;
+        pVPPSurfacesIn[i]->Data.Pitch = width;
+        if (!1)
         {
-            pEncSurfaces[i] = new mfxFrameSurface1;
-            memset(pEncSurfaces[i], 0, sizeof(mfxFrameSurface1));
-            memcpy(&(pEncSurfaces[i]->Info), &(mfxEncParams.mfx.FrameInfo), sizeof(mfxFrameInfo));
-            pEncSurfaces[i]->Data.Y = &surfaceBuffers[surfaceSize * i];
-            pEncSurfaces[i]->Data.U = pEncSurfaces[i]->Data.Y + width * height;
-            pEncSurfaces[i]->Data.V = pEncSurfaces[i]->Data.U + 1;
-            pEncSurfaces[i]->Data.Pitch = width;
-            if (!1)
-            {
-                ClearYUVSurfaceSysMem(pEncSurfaces[i], width, height);
-            }
-        }
-    }
-    else if(mfxEncParams.mfx.CodecId == MFX_CODEC_HEVC)
-    {
-        //5. Allocate surfaces for encoder
-        // - Width and height of buffer must be aligned, a multiple of 32
-        // - Frame surface array keeps pointers all surface planes and general frame info
-        // - For HEVC 10 bit, the bytes per pixel is doubled, so the width is multiplied by 2.
-        width = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Width );
-        height = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Height);
-        bitsPerPixel = 16;        // P010 format is a 24 bits per pixel format but we have double the width
-        surfaceSize = width * height * bitsPerPixel / 8;
-        surfaceBuffers = (mfxU8*) new mfxU8[surfaceSize * nEncSurfNum];
-
-        // Allocate surface headers (mfxFrameSurface1) for encoder, noticed the width has been doubled for P010.
-        pEncSurfaces = new mfxFrameSurface1 *[nEncSurfNum];
-        MSDK_CHECK_POINTER(pEncSurfaces, MFX_ERR_MEMORY_ALLOC);
-        for (int i = 0; i < nEncSurfNum; i++)
-        {
-            pEncSurfaces[i] = new mfxFrameSurface1;
-            memset(pEncSurfaces[i], 0, sizeof(mfxFrameSurface1));
-            memcpy(&(pEncSurfaces[i]->Info), &(mfxEncParams.mfx.FrameInfo), sizeof(mfxFrameInfo));
-            pEncSurfaces[i]->Data.Y = &surfaceBuffers[surfaceSize * i];
-            pEncSurfaces[i]->Data.U = pEncSurfaces[i]->Data.Y + width * height;
-            pEncSurfaces[i]->Data.V = pEncSurfaces[i]->Data.U + 1;
-            pEncSurfaces[i]->Data.Pitch = width;
-            if (!1)
-            {
-                ClearYUVSurfaceSysMem(pEncSurfaces[i], width, height);
-            }
+            ClearYUVSurfaceSysMem(pVPPSurfacesIn[i], width, height);
         }
     }
 
-    //5. Initialize the Media SDK encoder
+    // Allocate surfaces for VPP: Out
+    width = (mfxU16) MSDK_ALIGN32(MAX_WIDTH);
+    height = (mfxU16) MSDK_ALIGN32(MAX_HEIGHT);
+    surfaceSize = width * height * bitsPerPixel / 8;
+    mfxU8* surfaceBuffersOut = (mfxU8*) new mfxU8[surfaceSize * nSurfNumVPPOutEnc];
+
+    pVPPSurfacesOut = new mfxFrameSurface1 *[nSurfNumVPPOutEnc];
+    MSDK_CHECK_POINTER(pVPPSurfacesOut, MFX_ERR_MEMORY_ALLOC);
+    for (int i = 0; i < nSurfNumVPPOutEnc; i++)
+    {
+        pVPPSurfacesOut[i] = new mfxFrameSurface1;
+        memset(pVPPSurfacesOut[i], 0, sizeof(mfxFrameSurface1));
+        memcpy(&(pVPPSurfacesOut[i]->Info), &(VPPParams.vpp.Out), sizeof(mfxFrameInfo));
+        pVPPSurfacesOut[i]->Data.Y = &surfaceBuffersOut[surfaceSize * i];
+        pVPPSurfacesOut[i]->Data.U = pVPPSurfacesOut[i]->Data.Y + width * height;
+        pVPPSurfacesOut[i]->Data.V = pVPPSurfacesOut[i]->Data.U + 1;
+        pVPPSurfacesOut[i]->Data.Pitch = width;
+    }
+
+    // Initialize extended buffer for frame processing
+    // - Denoise           VPP denoise filter
+    // - mfxExtVPPDoUse:   Define the processing algorithm to be used
+    // - mfxExtVPPDenoise: Denoise configuration
+    // - mfxExtBuffer:     Add extended buffers to VPP parameter configuration
+    mfxExtVPPDoUse extDoUse;
+    memset(&extDoUse, 0, sizeof(extDoUse));
+    mfxU32 tabDoUseAlg[1];
+    extDoUse.Header.BufferId = MFX_EXTBUFF_VPP_DOUSE;
+    extDoUse.Header.BufferSz = sizeof(mfxExtVPPDoUse);
+    extDoUse.NumAlg = 1;
+    extDoUse.AlgList = tabDoUseAlg;
+    tabDoUseAlg[0] = MFX_EXTBUFF_VPP_DENOISE;
+
+    mfxExtVPPDenoise denoiseConfig;
+    memset(&denoiseConfig, 0, sizeof(denoiseConfig));
+    denoiseConfig.Header.BufferId = MFX_EXTBUFF_VPP_DENOISE;
+    denoiseConfig.Header.BufferSz = sizeof(mfxExtVPPDenoise);
+    denoiseConfig.DenoiseFactor = 100;        // can be 1-100
+
+    mfxExtBuffer* ExtBuffer[2];
+    ExtBuffer[0] = (mfxExtBuffer*) &extDoUse;
+    ExtBuffer[1] = (mfxExtBuffer*) &denoiseConfig;
+    VPPParams.NumExtParam = 2;
+    VPPParams.ExtParam = (mfxExtBuffer**) &ExtBuffer[0];
+
+
+
+    //8 Initialize the Media SDK encoder
     sts = mfxENC->Init(&mfxEncParams);
     MSDK_IGNORE_MFX_STS(sts, MFX_WRN_PARTIAL_ACCELERATION);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+    //5. Initialize Media SDK VPP
+    sts = mfxVPP->Init(&VPPParams);
+    MSDK_IGNORE_MFX_STS(sts, MFX_WRN_PARTIAL_ACCELERATION);
+    MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+
+
 
     // Retrieve video parameters selected by encoder.
     // - BufferSizeInKB parameter is required to set bit stream buffer size
@@ -310,20 +334,56 @@ mfxStatus encode::encodeBuffer(unsigned char* buffer,bool savefile)
 {
     if(!buffer)
         return MFX_ERR_NULL_PTR;
-    int nEncSurfIdx = 0;
-    mfxU32 nFrame = 0;
+    int nSurfIdxIn = 0, nSurfIdxOut = 0;
+    static mfxU32 nFrame = 0;
     mfxSyncPoint syncp;
-    nEncSurfIdx = GetFreeSurfaceIndex(pEncSurfaces, nEncSurfNum);   // Find free frame surface
-    MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nEncSurfIdx, MFX_ERR_MEMORY_ALLOC);
+//    nEncSurfIdx = GetFreeSurfaceIndex(pEncSurfaces, nEncSurfNum);   // Find free frame surface
+//    MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nEncSurfIdx, MFX_ERR_MEMORY_ALLOC);
+//
+//    sts = LoadRawFrameFromV4l2(pEncSurfaces[nEncSurfIdx], buffer);
+//
+//    MSDK_RETURN_ON_ERROR(sts);
 
-    sts = LoadRawFrameFromV4l2(pEncSurfaces[nEncSurfIdx], buffer);
 
+
+    nSurfIdxIn = GetFreeSurfaceIndex(pVPPSurfacesIn, nSurfNumVPPIn);        // Find free input frame surface
+    pVPPSurfacesIn[nSurfIdxIn]->Data.TimeStamp = nFrame*90000/VPPParams.vpp.Out.FrameRateExtN;
+
+    sts = LoadRawFrameFromV4l2(pVPPSurfacesIn[nSurfIdxIn], buffer);
     MSDK_RETURN_ON_ERROR(sts);
+
+    nSurfIdxOut = GetFreeSurfaceIndex(pVPPSurfacesOut, nSurfNumVPPOutEnc);     // Find free output frame surface
+    MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nSurfIdxOut, MFX_ERR_MEMORY_ALLOC);
+
+    for (;;)
+    {
+        // Process a frame asychronously (returns immediately)
+        sts = mfxVPP->RunFrameVPPAsync(pVPPSurfacesIn[nSurfIdxIn], pVPPSurfacesOut[nSurfIdxOut], NULL, &syncp);
+
+        //skip a frame
+
+        if(MFX_ERR_MORE_DATA==sts)
+        {
+            nSurfIdxIn = GetFreeSurfaceIndex(pVPPSurfacesIn,nSurfNumVPPIn);
+            MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nSurfIdxIn,MFX_ERR_MEMORY_ALLOC);
+            pVPPSurfacesIn[nSurfIdxIn]->Data.TimeStamp=nFrame*90000/VPPParams.vpp.Out.FrameRateExtN;
+            sts = LoadRawFrameFromV4l2(pVPPSurfacesIn[nSurfIdxIn], buffer);
+        }
+
+
+        if (MFX_WRN_DEVICE_BUSY == sts)
+        {
+            MSDK_SLEEP(1);  // Wait if device is busy, then repeat the same call
+        }
+        else
+            break;
+
+    }
 
     for (;;)
     {
         // Encode a frame asychronously (returns immediately)
-        sts = mfxENC->EncodeFrameAsync(NULL, pEncSurfaces[nEncSurfIdx], &mfxBS, &syncp);
+        sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
         //printf("********************\n");
         if (MFX_ERR_NONE < sts && !syncp)       // Repeat the call if warning and no output
         {

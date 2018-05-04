@@ -141,10 +141,10 @@
 1524534426 source:/root/intel/workspace/sdtNewTerminal/src/capture.cpp
 	"capture.h"
 
-1525398400 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
+1525426760 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
 	"encode.h"
 
-1525394578 /root/intel/workspace/sdtNewTerminal/include/encode.h
+1525411449 /root/intel/workspace/sdtNewTerminal/include/encode.h
 	<iostream>
 	<vector>
 	<errno.h>
