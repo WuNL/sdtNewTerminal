@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-h265 -v4l2 -auto -g 1920x1080 -b 4000 -f 30/1 -ip 192.168.1.100 -port 8088  /root/intel/workspace/v4l2/c.rgb testv4l2.264" />
+				<Option parameters="-h265 -v4l2 -auto -g 1920x1080 -b 6000 -f 30/1 -ip 192.168.1.100 -port 8088  /root/intel/workspace/v4l2/c.rgb testv4l2.264" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />

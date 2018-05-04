@@ -1,4 +1,5 @@
 #include "encode.h"
+#define MSDK_ZERO_MEMORY(VAR)                    {memset(&VAR, 0, sizeof(VAR));}
 namespace encodens
 {
 void quit(const char * msg)
@@ -53,15 +54,38 @@ int encode::init(CmdOptions& options)
 
     // Create Media SDK encoder
     mfxENC = new MFXVideoENCODE(session);
+    // Create Media SDK VPP component
+    MFXVideoVPP mfxVPP(session);
 
     memset(&mfxEncParams, 0, sizeof(mfxEncParams));
 
     mfxEncParams.mfx.CodecId = options.values.CodecId;
 
     mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
-    mfxEncParams.mfx.GopPicSize = (mfxU16)600;
+    mfxEncParams.mfx.GopPicSize = (mfxU16)300;
     mfxEncParams.mfx.IdrInterval = (mfxU16)1;
     mfxEncParams.mfx.GopRefDist = (mfxU16)1;
+
+    //取消每帧附带的sei。实际发现取消后容易花屏
+//    std::vector<mfxExtBuffer*> m_InitExtParams_ENC;
+//    mfxExtCodingOption* pCodingOption = new mfxExtCodingOption;
+//    MSDK_ZERO_MEMORY(*pCodingOption);
+//    pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+//    pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
+//    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
+//    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_OFF;
+//
+//    mfxExtCodingOption2* pCodingOption2 = new mfxExtCodingOption2;
+//    MSDK_ZERO_MEMORY(*pCodingOption2);
+//    pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
+//    pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
+//    pCodingOption2->RepeatPPS = MFX_CODINGOPTION_OFF;
+//
+//    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
+//    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
+//
+//    mfxEncParams.ExtParam    = m_InitExtParams_ENC.data();
+//    mfxEncParams.NumExtParam = (mfxU16)m_InitExtParams_ENC.size();
 
     if(mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
     {
@@ -145,6 +169,47 @@ int encode::init(CmdOptions& options)
         }
     }
 
+    // Initialize VPP parameters
+    mfxVideoParam VPPParams;
+    memset(&VPPParams, 0, sizeof(VPPParams));
+    // Input data
+    VPPParams.vpp.In.FourCC = MFX_FOURCC_NV12;
+    VPPParams.vpp.In.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
+    VPPParams.vpp.In.CropX = 0;
+    VPPParams.vpp.In.CropY = 0;
+    VPPParams.vpp.In.CropW = options.values.Width;
+    VPPParams.vpp.In.CropH = options.values.Height;
+    VPPParams.vpp.In.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
+    VPPParams.vpp.In.FrameRateExtN = options.values.FrameRateN;
+    VPPParams.vpp.In.FrameRateExtD = options.values.FrameRateD;
+    // width must be a multiple of 16
+    // height must be a multiple of 16 in case of frame picture and a multiple of 32 in case of field picture
+    VPPParams.vpp.In.Width = MSDK_ALIGN16(options.values.Width);
+    VPPParams.vpp.In.Height =
+        (MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.In.PicStruct) ?
+        MSDK_ALIGN16(options.values.Height) :
+        MSDK_ALIGN32(options.values.Height);
+    // Output data
+    VPPParams.vpp.Out.FourCC = MFX_FOURCC_NV12;
+    VPPParams.vpp.Out.ChromaFormat = MFX_CHROMAFORMAT_YUV420;
+    VPPParams.vpp.Out.CropX = 0;
+    VPPParams.vpp.Out.CropY = 0;
+    VPPParams.vpp.Out.CropW = options.values.Width;
+    VPPParams.vpp.Out.CropH = options.values.Height;
+    VPPParams.vpp.Out.PicStruct = MFX_PICSTRUCT_PROGRESSIVE;
+    VPPParams.vpp.Out.FrameRateExtN = options.values.FrameRateN;
+    VPPParams.vpp.Out.FrameRateExtD = options.values.FrameRateD;
+    // width must be a multiple of 16
+    // height must be a multiple of 16 in case of frame picture and a multiple of 32 in case of field picture
+    VPPParams.vpp.Out.Width = MSDK_ALIGN16(VPPParams.vpp.Out.CropW);
+    VPPParams.vpp.Out.Height =
+        (MFX_PICSTRUCT_PROGRESSIVE == VPPParams.vpp.Out.PicStruct) ?
+        MSDK_ALIGN16(VPPParams.vpp.Out.CropH) :
+        MSDK_ALIGN32(VPPParams.vpp.Out.CropH);
+
+    VPPParams.IOPattern = MFX_IOPATTERN_IN_VIDEO_MEMORY | MFX_IOPATTERN_OUT_VIDEO_MEMORY;
+
+
     // Validate video encode parameters (optional)
     // - In this example the validation result is written to same structure
     // - MFX_WRN_INCOMPATIBLE_VIDEO_PARAM is returned if some of the video parameters are not supported,
@@ -196,9 +261,9 @@ int encode::init(CmdOptions& options)
         // - Width and height of buffer must be aligned, a multiple of 32
         // - Frame surface array keeps pointers all surface planes and general frame info
         // - For HEVC 10 bit, the bytes per pixel is doubled, so the width is multiplied by 2.
-        width = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Width * 2);
+        width = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Width );
         height = (mfxU16) MSDK_ALIGN32(EncRequest.Info.Height);
-        bitsPerPixel = 12;        // P010 format is a 24 bits per pixel format but we have double the width
+        bitsPerPixel = 16;        // P010 format is a 24 bits per pixel format but we have double the width
         surfaceSize = width * height * bitsPerPixel / 8;
         surfaceBuffers = (mfxU8*) new mfxU8[surfaceSize * nEncSurfNum];
 

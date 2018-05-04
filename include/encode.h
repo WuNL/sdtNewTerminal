@@ -1,6 +1,7 @@
 #ifndef ENCODE_H
 #define ENCODE_H
-
+#include <iostream>
+#include <vector>
 #include <errno.h>
 #include <stdlib.h>
 #include "observer.h"
@@ -27,7 +28,12 @@ private:
     MFXVideoSession session;
     MFXVideoENCODE* mfxENC;
     mfxVideoParam mfxEncParams;
+    mfxVideoParam VPPParams;
+
     mfxFrameAllocRequest EncRequest;
+    mfxFrameAllocRequest VPPRequest[2];     // [0] - in, [1] - out
+    mfxFrameAllocResponse mfxResponseVPPIn;
+    mfxFrameAllocResponse mfxResponseVPPOutEnc;
     mfxVideoParam par;
 
 
