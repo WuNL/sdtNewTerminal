@@ -391,7 +391,10 @@ mfxStatus encode::encodeBuffer(unsigned char* buffer,bool savefile)
         {
             mfxEncodeCtrl ctrl;
             memset(&ctrl,0,sizeof(ctrl));
-            ctrl.FrameType=MFX_FRAMETYPE_IDR;
+            if(mfxEncParams.mfx.CodecId==MFX_CODEC_AVC)
+                ctrl.FrameType=(MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR | MFX_FRAMETYPE_REF);
+            else if(mfxEncParams.mfx.CodecId==MFX_CODEC_HEVC)
+                ctrl.FrameType=(MFX_FRAMETYPE_I | MFX_FRAMETYPE_IDR | MFX_FRAMETYPE_REF);
             sts = mfxENC->EncodeFrameAsync(&ctrl, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
             printf("IDR frame insert success\n");
             insertIDR = false;
