@@ -18,7 +18,8 @@ encode::encode(CmdOptions& options):sts(MFX_ERR_NONE),
     }
 }),
 fSink(NULL),
-useVPP(false)
+useVPP(false),
+insertIDR(false)
 {
     //ctor
     surfaceBuffers = NULL;
@@ -386,7 +387,20 @@ mfxStatus encode::encodeBuffer(unsigned char* buffer,bool savefile)
     for (;;)
     {
         // Encode a frame asychronously (returns immediately)
-        sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+        if(insertIDR)
+        {
+            mfxEncodeCtrl ctrl;
+            memset(&ctrl,0,sizeof(ctrl));
+            ctrl.FrameType=MFX_FRAMETYPE_IDR;
+            sts = mfxENC->EncodeFrameAsync(&ctrl, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+            printf("IDR frame insert success\n");
+            insertIDR = false;
+        }
+        else
+        {
+            sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+        }
+
         //printf("********************\n");
         if (MFX_ERR_NONE < sts && !syncp)       // Repeat the call if warning and no output
         {

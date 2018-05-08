@@ -12,7 +12,7 @@
 #define MAX_HEIGHT 1080
 #define CAPTURE_FRAMERATE 30
 
-class encode
+class encode:public observer
 {
 public:
     encode(CmdOptions& options);
@@ -21,6 +21,14 @@ public:
     mfxStatus encodeBuffer(unsigned char* buffer,bool savefile);
     mfxStatus encodeBufferLeft(unsigned char* buffer,bool savefile);
     mfxBitstream mfxBS;
+    void update(string msg)
+    {
+        if(msg==string("insertIDR"))
+        {
+            printf("insertIDR msg is comming!\n");
+            insertIDR = true;
+        }
+    }
 protected:
 
 private:
@@ -56,6 +64,7 @@ private:
     FILE* fSink;
 
     bool useVPP;
+    bool insertIDR;
 };
 
 #endif // ENCODE_H

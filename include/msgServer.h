@@ -44,11 +44,6 @@ private:
     {
         map<string,vector<observer*> >::iterator it;
 
-        for(it=topicMap.begin(); it!=topicMap.end(); ++it)
-        {
-            std::cout<<"key: "<<it->first <<std::endl;
-        }
-
         it = topicMap.find(topic);
         //MAP中没有此主题
         if(it==topicMap.end())

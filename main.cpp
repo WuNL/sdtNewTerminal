@@ -68,8 +68,9 @@ int main(int argc, char** argv)
 
     msgServer msgSer(options);
     videoPipeline vp(options);
-
+    vp.addEncodeAsOb(&msgSer);
     msgSer.addSubscribe("general",(observer*)&vp);
+
 
     vp.start();
     msgSer.start();

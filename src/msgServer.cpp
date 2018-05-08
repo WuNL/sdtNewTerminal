@@ -112,10 +112,12 @@ void msgServer::on_read(char * ptr, const boost::system::error_code & err, std::
 
     if(strcmp(ptr,"1")==0)
         int i = 0;
-    if(strcmp(ptr,"2")==0)
+    else if(strcmp(ptr,"2")==0)
         int i = 0;
-
-    notifyTopicOfOptions(string("general"));
+    else if(strcmp(ptr,"insertIDR")==0)
+        notifyTopic(string("encode"),string("insertIDR"));
+    else
+        notifyTopicOfOptions(string("general"));
     delete[] ptr;
 
     //异步向客户端发送数据，发送完成时调用write_handler

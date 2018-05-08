@@ -16,6 +16,11 @@ public:
     videoPipeline(CmdOptions& options);
     virtual ~videoPipeline();
 
+    void addEncodeAsOb(msgServer* sj_)
+    {
+        sj=sj_;
+    }
+
     bool GetisRun()
     {
         return isRun;
@@ -88,6 +93,7 @@ private:
 
     pthread_t thread;
     void *cap_buf, *cvt_buf, *hd_buf, *enc_buf, *pac_buf;
+    msgServer* sj;
 };
 
 #endif // VIDEOPIPELINE_H

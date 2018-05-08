@@ -71,6 +71,7 @@ void videoPipeline::init(CmdOptions& options)
 
     encoder = NULL;
     encoder = new encode(options);
+    sj->addSubscribe(string("encode"),(observer*)encoder);
     encoder->init(options);
 
     if(options.values.CodecId==MFX_CODEC_AVC)

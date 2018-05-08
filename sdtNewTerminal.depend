@@ -110,7 +110,7 @@
 	"common_vaapi.h"
 	<map>
 
-1525240405 source:/root/intel/workspace/sdtNewTerminal/main.cpp
+1525761114 source:/root/intel/workspace/sdtNewTerminal/main.cpp
 	<iostream>
 	"videoPipeline.h"
 
@@ -141,10 +141,10 @@
 1524534426 source:/root/intel/workspace/sdtNewTerminal/src/capture.cpp
 	"capture.h"
 
-1525757432 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
+1525761516 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
 	"encode.h"
 
-1525411449 /root/intel/workspace/sdtNewTerminal/include/encode.h
+1525761404 /root/intel/workspace/sdtNewTerminal/include/encode.h
 	<iostream>
 	<vector>
 	<errno.h>
@@ -192,7 +192,7 @@
 	"../common/common_utils.h"
 	"../common/cmd_options.h"
 
-1525243684 source:/root/intel/workspace/sdtNewTerminal/src/msgServer.cpp
+1525760788 source:/root/intel/workspace/sdtNewTerminal/src/msgServer.cpp
 	"msgServer.h"
 
 1525242330 /root/intel/workspace/sdtNewTerminal/include/msgServer.h
@@ -261,10 +261,10 @@
 	<boost/optional.hpp>
 	<boost/asio/steady_timer.hpp>
 
-1525746050 source:/root/intel/workspace/sdtNewTerminal/src/videoPipeline.cpp
+1525761147 source:/root/intel/workspace/sdtNewTerminal/src/videoPipeline.cpp
 	"videoPipeline.h"
 
-1525241972 /root/intel/workspace/sdtNewTerminal/include/videoPipeline.h
+1525761041 /root/intel/workspace/sdtNewTerminal/include/videoPipeline.h
 	<pthread.h>
 	<stdio.h>
 	<errno.h>
