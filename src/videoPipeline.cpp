@@ -139,6 +139,10 @@ void videoPipeline::videoInPipeline()
 
         sts = encoder->encodeBuffer(yuvbuffer,true);
 
+        //skip a frame; used for 60 fps to 30 fps
+        if(MFX_ERR_MORE_DATA==sts)
+            continue;
+
         if(encoder->mfxBS.DataLength==0)
             continue;
         pkt->pack_put(encoder->mfxBS.Data + encoder->mfxBS.DataOffset, encoder->mfxBS.DataLength);

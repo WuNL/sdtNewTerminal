@@ -21,7 +21,7 @@ fSink(NULL),
 useVPP(false)
 {
     //ctor
-
+    surfaceBuffers = NULL;
 
 }
 
@@ -33,12 +33,9 @@ encode::~encode()
     delete mfxENC;
     // session closed automatically on destruction
 
-    for (int i = 0; i < nEncSurfNum; i++)
-        delete pEncSurfaces[i];
-    MSDK_SAFE_DELETE_ARRAY(pEncSurfaces);
     MSDK_SAFE_DELETE_ARRAY(mfxBS.Data);
-
-    MSDK_SAFE_DELETE_ARRAY(surfaceBuffers);
+    if(!surfaceBuffers)
+        MSDK_SAFE_DELETE_ARRAY(surfaceBuffers);
     if(fSink)
         fclose(fSink);
 }
@@ -58,7 +55,7 @@ int encode::init(CmdOptions& options)
     mfxEncParams.mfx.CodecId = options.values.CodecId;
 
     mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
-    mfxEncParams.mfx.GopPicSize = (mfxU16)300;
+    mfxEncParams.mfx.GopPicSize = (mfxU16)1200;
     mfxEncParams.mfx.IdrInterval = (mfxU16)1;
     mfxEncParams.mfx.GopRefDist = (mfxU16)1;
 
@@ -367,7 +364,13 @@ mfxStatus encode::encodeBuffer(unsigned char* buffer,bool savefile)
             nSurfIdxIn = GetFreeSurfaceIndex(pVPPSurfacesIn,nSurfNumVPPIn);
             MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nSurfIdxIn,MFX_ERR_MEMORY_ALLOC);
             pVPPSurfacesIn[nSurfIdxIn]->Data.TimeStamp=nFrame*90000/VPPParams.vpp.Out.FrameRateExtN;
-            sts = LoadRawFrameFromV4l2(pVPPSurfacesIn[nSurfIdxIn], buffer);
+            return sts;
+        }
+
+        //add (often duplicate) a frame
+        if(MFX_ERR_MORE_SURFACE==sts)
+        {
+            //todo
         }
 
 
@@ -420,8 +423,6 @@ mfxStatus encode::encodeBuffer(unsigned char* buffer,bool savefile)
             mfxBS.DataLength = tmp;
             fflush(stdout);
         }
-//        else
-//            mfxBS.DataLength = 0;
     }
 }
 

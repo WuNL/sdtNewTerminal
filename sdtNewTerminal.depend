@@ -141,7 +141,7 @@
 1524534426 source:/root/intel/workspace/sdtNewTerminal/src/capture.cpp
 	"capture.h"
 
-1525426760 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
+1525757432 source:/root/intel/workspace/sdtNewTerminal/src/encode.cpp
 	"encode.h"
 
 1525411449 /root/intel/workspace/sdtNewTerminal/include/encode.h
@@ -261,7 +261,7 @@
 	<boost/optional.hpp>
 	<boost/asio/steady_timer.hpp>
 
-1525241814 source:/root/intel/workspace/sdtNewTerminal/src/videoPipeline.cpp
+1525746050 source:/root/intel/workspace/sdtNewTerminal/src/videoPipeline.cpp
 	"videoPipeline.h"
 
 1525241972 /root/intel/workspace/sdtNewTerminal/include/videoPipeline.h

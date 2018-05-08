@@ -1,0 +1,164 @@
+    bool processing_vpp=true;
+    //while (processing_vpp)
+    {
+        sts = mfxVPP->RunFrameVPPAsync(pVPPSurfacesIn[nSurfIdxIn],pVPPSurfacesOut[nSurfIdxOut], NULL, &syncp);
+        switch(sts)
+        {
+            case MFX_ERR_MORE_DATA:
+                //skip a frame
+                nSurfIdxIn = GetFreeSurfaceIndex(pVPPSurfacesIn,nSurfNumVPPIn);
+
+                MSDK_CHECK_ERROR(MFX_ERR_NOT_FOUND, nSurfIdxIn,MFX_ERR_MEMORY_ALLOC);
+
+                pVPPSurfacesIn[nSurfIdxIn]->Data.TimeStamp= nFrame*90000/VPPParams.vpp.Out.FrameRateExtN;
+                sts = mfxVPP->RunFrameVPPAsync(pVPPSurfacesIn[nSurfIdxIn], pVPPSurfacesOut[nSurfIdxOut], NULL, &syncp);
+                if (sts!=MFX_ERR_NONE) {processing_vpp=false;}
+                break;
+            case MFX_ERR_MORE_SURFACE:
+                //add (often duplicate) a frame
+                nSurfIdxOut = GetFreeSurfaceIndex(pVPPSurfacesOut,nSurfNumVPPOutEnc);// Find free output frame surface
+                sts = session.SyncOperation(syncp, 60000);
+                ++nFrame;
+                for (;;)
+                {
+                    // Encode a frame asychronously (returns immediately)
+                    sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+                    //printf("********************\n");
+                    if (MFX_ERR_NONE < sts && !syncp)       // Repeat the call if warning and no output
+                    {
+                        if (MFX_WRN_DEVICE_BUSY == sts)
+                            MSDK_SLEEP(1);  // Wait if device is busy, then repeat the same call
+                    }
+                    else if (MFX_ERR_NONE < sts && syncp)
+                    {
+                        sts = MFX_ERR_NONE;     // Ignore warnings if output is available
+                        break;
+                    }
+                    else if (MFX_ERR_NOT_ENOUGH_BUFFER == sts)
+                    {
+                        // Allocate more bitstream buffer memory here if needed...
+                        break;
+                    }
+                    else
+                        break;
+                }
+
+
+                if (MFX_ERR_NONE == sts)
+                {
+                    sts = session.SyncOperation(syncp, 60000);      // Synchronize. Wait until encoded frame is ready
+                    MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+
+                    ++nFrame;
+                    if (savefile)
+                    {
+                        //原版，将编码厚的264存文件
+                        int tmp = mfxBS.DataLength;
+                        sts = WriteBitStreamFrame(&mfxBS, fSink);
+                        MSDK_RETURN_ON_ERROR(sts);
+                        mfxBS.DataLength = tmp;
+                        fflush(stdout);
+                    }
+                }
+                MSDK_BREAK_ON_ERROR(sts);
+                break;
+
+
+
+
+            case MFX_WRN_DEVICE_BUSY:
+                MSDK_SLEEP(1);
+                break;
+            default:
+                processing_vpp=false;
+                break;
+        }e;
+        for (;;)
+        {
+            // Encode a frame asychronously (returns immediately)
+            sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+            //printf("********************\n");
+            if (MFX_ERR_NONE < sts && !syncp)       // Repeat the call if warning and no output
+            {
+                if (MFX_WRN_DEVICE_BUSY == sts)
+                    MSDK_SLEEP(1);  // Wait if device is busy, then repeat the same call
+            }
+            else if (MFX_ERR_NONE < sts && syncp)
+            {
+                sts = MFX_ERR_NONE;     // Ignore warnings if output is available
+                break;
+            }
+            else if (MFX_ERR_NOT_ENOUGH_BUFFER == sts)
+            {
+                // Allocate more bitstream buffer memory here if needed...
+                break;
+            }
+            else
+                break;
+        }
+
+
+        if (MFX_ERR_NONE == sts)
+        {
+            sts = session.SyncOperation(syncp, 60000);      // Synchronize. Wait until encoded frame is ready
+            MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+
+            ++nFrame;
+            if (savefile)
+            {
+                //原版，将编码厚的264存文件
+                int tmp = mfxBS.DataLength;
+                sts = WriteBitStreamFrame(&mfxBS, fSink);
+                MSDK_RETURN_ON_ERROR(sts);
+                mfxBS.DataLength = tmp;
+                fflush(stdout);
+            }
+        }
+
+    }
+        if (sts!=MFX_ERR_NONE) return sts;
+        sts = session.SyncOperation(syncp, 60000);
+        ++nFrame;
+        for (;;)
+        {
+            // Encode a frame asychronously (returns immediately)
+            sts = mfxENC->EncodeFrameAsync(NULL, pVPPSurfacesOut[nSurfIdxOut], &mfxBS, &syncp);
+            //printf("********************\n");
+            if (MFX_ERR_NONE < sts && !syncp)       // Repeat the call if warning and no output
+            {
+                if (MFX_WRN_DEVICE_BUSY == sts)
+                    MSDK_SLEEP(1);  // Wait if device is busy, then repeat the same call
+            }
+            else if (MFX_ERR_NONE < sts && syncp)
+            {
+                sts = MFX_ERR_NONE;     // Ignore warnings if output is available
+                break;
+            }
+            else if (MFX_ERR_NOT_ENOUGH_BUFFER == sts)
+            {
+                // Allocate more bitstream buffer memory here if needed...
+                break;
+            }
+            else
+                break;
+        }
+
+
+        if (MFX_ERR_NONE == sts)
+        {
+            sts = session.SyncOperation(syncp, 60000);      // Synchronize. Wait until encoded frame is ready
+            MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
+
+            ++nFrame;
+            if (savefile)
+            {
+                //原版，将编码厚的264存文件
+                int tmp = mfxBS.DataLength;
+                sts = WriteBitStreamFrame(&mfxBS, fSink);
+                MSDK_RETURN_ON_ERROR(sts);
+                mfxBS.DataLength = tmp;
+                fflush(stdout);
+            }
+        }
+
+    }
