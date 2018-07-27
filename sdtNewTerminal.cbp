@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-h265 -v4l2 -auto -g 1920x1080 -b 768 -f 30/1 -ip 192.168.1.100 -port 8088  /root/intel/workspace/v4l2/c.rgb testv4l2.264" />
+				<Option parameters="-h264 -v4l2 -auto -g 640x480 -b 5000 -f 30/1 -ip 192.168.8.1  -port 8088  /root/intel/workspace/v4l2/c.rgb testv4l2.264" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
@@ -19,7 +19,7 @@
 					<Add directory="/opt/intel/mediasdk/include" />
 				</Compiler>
 				<Linker>
-					<Add option="-ljpeg -lmfx -lva -lva-drm -pthread -lrt -ldl" />
+					<Add option="-ljpeg -lmfx -lva -lva-drm  -pthread -lrt -ldl" />
 					<Add library="boost_filesystem" />
 					<Add library="boost_thread" />
 					<Add library="boost_system" />
@@ -59,16 +59,22 @@
 		<Unit filename="include/network.h" />
 		<Unit filename="include/observer.h" />
 		<Unit filename="include/packet.h" />
+		<Unit filename="include/semtool.h" />
+		<Unit filename="include/shmfifo.h" />
 		<Unit filename="include/subject.h" />
 		<Unit filename="include/videoPipeline.h" />
 		<Unit filename="include/vpp.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="semtool.h" />
+		<Unit filename="shmfifo.h" />
 		<Unit filename="src/boss.cpp" />
 		<Unit filename="src/capture.cpp" />
 		<Unit filename="src/encode.cpp" />
 		<Unit filename="src/msgServer.cpp" />
 		<Unit filename="src/network.cpp" />
 		<Unit filename="src/packet.cpp" />
+		<Unit filename="src/semtool.cpp" />
+		<Unit filename="src/shmfifo.cpp" />
 		<Unit filename="src/videoPipeline.cpp" />
 		<Unit filename="src/vpp.cpp" />
 		<Unit filename="tinixml/tinystr.cpp" />

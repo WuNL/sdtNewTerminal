@@ -6,7 +6,8 @@ videoPipeline::videoPipeline(CmdOptions& options):captureDevice(NULL),
     nethandle(NULL),
     msgSer(NULL),
     isRun(true),
-    isReleased(false)
+    isReleased(false),
+    fifo(NULL)
 {
     //ctor
     opt = options;
@@ -101,6 +102,9 @@ void videoPipeline::init(CmdOptions& options)
         return;
     }
     isReleased = false;
+
+    fifo = shmfifo_init(1234, sizeof(vb), 30);
+
 }
 
 void videoPipeline::realRelease()
@@ -138,7 +142,7 @@ void videoPipeline::videoInPipeline()
         cnt++;
         captureDevice->camera_frame_and_decode(timeout,yuvbuffer,width,height);
 
-        sts = encoder->encodeBuffer(yuvbuffer,true);
+        sts = encoder->encodeBuffer(yuvbuffer,false);
 
         //skip a frame; used for 60 fps to 30 fps
         if(MFX_ERR_MORE_DATA==sts)
@@ -146,18 +150,34 @@ void videoPipeline::videoInPipeline()
 
         if(encoder->mfxBS.DataLength==0)
             continue;
-        pkt->pack_put(encoder->mfxBS.Data + encoder->mfxBS.DataOffset, encoder->mfxBS.DataLength);
 
-        int pac_len;
-        while (pkt->pack_get(&pac_buf, &pac_len) == 1)
-        {
-            int ret = net_send(nethandle, pac_buf, pac_len);
-            if (ret != pac_len)
-            {
-                printf("send pack data failed, size: %d, err: %s\n", pac_len,
-                       strerror(errno));
-            }
-        }
+        //WuNL
+        //todo share buffer
+
+        memset(&vb_, 0, sizeof(vb));
+        vb_.size = encoder->mfxBS.DataLength;
+
+        memcpy(vb_.buffer,encoder->mfxBS.Data + encoder->mfxBS.DataOffset,(size_t)encoder->mfxBS.DataLength);
+
+        shmfifo_put(fifo, &vb_);
+
+        //WuNL
+        //网络发包版本
+
+//        pkt->pack_put(encoder->mfxBS.Data + encoder->mfxBS.DataOffset, encoder->mfxBS.DataLength);
+//
+//        int pac_len;
+//        while (pkt->pack_get(&pac_buf, &pac_len) == 1)
+//        {
+//            int ret = net_send(nethandle, pac_buf, pac_len);
+//            //printf("send pack data, size: %d\n", pac_len);
+//            if (ret != pac_len)
+//            {
+//                printf("send pack data failed, size: %d, err: %s\n", pac_len,
+//                       strerror(errno));
+//            }
+//        }
+
         encoder->mfxBS.DataLength = 0;
 
 

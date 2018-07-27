@@ -10,15 +10,15 @@
 	"mfxdefs.h"
 	"mfxstructures.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxdefs.h
+1527825513 /opt/intel/mediasdk/include/mfxdefs.h
 	"mfxdispatcherprefixedfunctions.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxdispatcherprefixedfunctions.h
+1527825513 /opt/intel/mediasdk/include/mfxdispatcherprefixedfunctions.h
 
-1522139557 /opt/intel/mediasdk/include/mfxstructures.h
+1527834329 /opt/intel/mediasdk/include/mfxstructures.h
 	"mfxcommon.h"
 
-1524203642 /opt/intel/mediasdk/include/mfxcommon.h
+1527825513 /opt/intel/mediasdk/include/mfxcommon.h
 	"mfxdefs.h"
 
 1511309904 /root/intel/workspace/sdtNewTerminal/version.h
@@ -39,44 +39,44 @@
 	"bits/windows_defs.h"
 	"bits/linux_defs.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxvideo++.h
+1527825513 /opt/intel/mediasdk/include/mfxvideo++.h
 	"mfxvideo.h"
 	"mfxenc.h"
 	"mfxpak.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxvideo.h
+1527825513 /opt/intel/mediasdk/include/mfxvideo.h
 	"mfxsession.h"
 	"mfxvstructures.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxsession.h
+1527825513 /opt/intel/mediasdk/include/mfxsession.h
 	"mfxcommon.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxvstructures.h
+1527825513 /opt/intel/mediasdk/include/mfxvstructures.h
 	"mfxstructures.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxenc.h
+1527825513 /opt/intel/mediasdk/include/mfxenc.h
 	"mfxdefs.h"
 	"mfxvstructures.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxpak.h
+1527825513 /opt/intel/mediasdk/include/mfxpak.h
 	"mfxdefs.h"
 	"mfxvstructures.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxjpeg.h
+1527825513 /opt/intel/mediasdk/include/mfxjpeg.h
 	"mfxdefs.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxvp8.h
+1527825513 /opt/intel/mediasdk/include/mfxvp8.h
 	"mfxdefs.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxplugin.h
+1527825513 /opt/intel/mediasdk/include/mfxplugin.h
 	"mfxvideo.h"
 	"mfxaudio.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxaudio.h
+1527825513 /opt/intel/mediasdk/include/mfxaudio.h
 	"mfxsession.h"
 	"mfxastructures.h"
 
-1522139557 /opt/intel/mediasdk/include/mfxastructures.h
+1527831802 /opt/intel/mediasdk/include/mfxastructures.h
 	"mfxcommon.h"
 
 1510603782 /root/intel/workspace/sdtNewTerminal/common/bits/windows_defs.h
@@ -274,4 +274,267 @@
 	"packet.h"
 	"network.h"
 	"msgServer.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/common/cmd_options.cpp
+	<stdlib.h>
+	<string.h>
+	"cmd_options.h"
+	"../version.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/common/cmd_options.h
+	<stdio.h>
+	"mfxdefs.h"
+	"mfxstructures.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/version.h
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/common/common_utils.cpp
+	<math.h>
+	"common_utils.h"
+	<array>
+	<vector>
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/common/common_utils.h
+	<stdio.h>
+	<stdint.h>
+	"mfxvideo++.h"
+	"mfxjpeg.h"
+	"mfxvp8.h"
+	"mfxplugin.h"
+	"bits/windows_defs.h"
+	"bits/linux_defs.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/common/bits/windows_defs.h
+	<windows.h>
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/common/bits/linux_defs.h
+	<stdio.h>
+	<string.h>
+	<time.h>
+	<unistd.h>
+
+1528420545 source:/home/sdt/workspace/sdtNewTerminal/common/common_utils_linux.cpp
+	"mfxvideo.h"
+	"mfxlinux.h"
+	"common_utils.h"
+	"common_vaapi.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/common/common_vaapi.h
+	<stdio.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<new>
+	<stdlib.h>
+	<assert.h>
+	"mfxvideo++.h"
+	"va/va.h"
+	"va/va_drm.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/common/common_vaapi.cpp
+	"common_vaapi.h"
+	<map>
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/main.cpp
+	<iostream>
+	"videoPipeline.h"
+
+1532506435 /home/sdt/workspace/sdtNewTerminal/include/videoPipeline.h
+	<pthread.h>
+	<stdio.h>
+	<errno.h>
+	<stdlib.h>
+	"capture.h"
+	"encode.h"
+	"packet.h"
+	"network.h"
+	"msgServer.h"
+	"shmfifo.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/capture.h
+	<stdint.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	<fcntl.h>
+	<sys/ioctl.h>
+	<sys/mman.h>
+	<asm/types.h>
+	<linux/videodev2.h>
+	<sys/time.h>
+	<sys/types.h>
+	<unistd.h>
+	<jpeglib.h>
+	<jerror.h>
+	<sys/timeb.h>
+	"observer.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/observer.h
+	<iostream>
+	<stdio.h>
+	"../common/common_utils.h"
+	"../common/cmd_options.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/encode.h
+	<iostream>
+	<vector>
+	<errno.h>
+	<stdlib.h>
+	"observer.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/packet.h
+	"stdint.h"
+	<stdio.h>
+	"observer.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/network.h
+	<string.h>
+	"observer.h"
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<sys/socket.h>
+
+1528167880 /home/sdt/workspace/sdtNewTerminal/include/msgServer.h
+	<iostream>
+	<pthread.h>
+	<signal.h>
+	"unistd.h"
+	"subject.h"
+	"network.h"
+	"encode.h"
+	<boost/thread/thread.hpp>
+	<boost/thread/mutex.hpp>
+	<boost/thread/tss.hpp>
+	<boost/asio.hpp>
+	<boost/bind.hpp>
+	<boost/atomic.hpp>
+	<boost/smart_ptr.hpp>
+	<boost/optional.hpp>
+	<boost/asio/steady_timer.hpp>
+
+1528180786 /home/sdt/workspace/sdtNewTerminal/include/subject.h
+	<iostream>
+	<map>
+	<vector>
+	"observer.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/boss.cpp
+	"boss.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/boss.h
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/capture.cpp
+	"capture.h"
+
+1532334253 source:/home/sdt/workspace/sdtNewTerminal/src/encode.cpp
+	"encode.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/msgServer.cpp
+	"msgServer.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/network.cpp
+	"network.h"
+
+1532052032 source:/home/sdt/workspace/sdtNewTerminal/src/packet.cpp
+	"packet.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<arpa/inet.h>
+	<sys/timeb.h>
+	<string.h>
+
+1532506243 source:/home/sdt/workspace/sdtNewTerminal/src/videoPipeline.cpp
+	"videoPipeline.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/vpp.cpp
+	"vpp.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/include/vpp.h
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/tinixml/tinystr.cpp
+	"tinystr.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/tinixml/tinystr.h
+	<assert.h>
+	<string.h>
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/tinixml/tinyxml.cpp
+	<ctype.h>
+	<sstream>
+	<iostream>
+	"tinyxml.h"
+
+1527830977 /home/sdt/workspace/sdtNewTerminal/tinixml/tinyxml.h
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<string>
+	<iostream>
+	<sstream>
+	"tinystr.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/tinixml/tinyxmlerror.cpp
+	"tinyxml.h"
+
+1527830977 source:/home/sdt/workspace/sdtNewTerminal/tinixml/tinyxmlparser.cpp
+	<ctype.h>
+	<stddef.h>
+	"tinyxml.h"
+	<windows.h>
+
+1531366497 source:/home/sdt/workspace/sdtNewTerminal/semtool.cpp
+	"semtool.h"
+
+1531451945 /home/sdt/workspace/sdtNewTerminal/semtool.h
+	<sys/types.h>
+	<unistd.h>
+	<sys/ipc.h>
+	<sys/sem.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+
+1531443321 source:/home/sdt/workspace/sdtNewTerminal/shmfifo.cpp
+	"shmfifo.h"
+	"semtool.h"
+	<assert.h>
+
+1531461438 /home/sdt/workspace/sdtNewTerminal/shmfifo.h
+	<stdio.h>
+	<stdlib.h>
+	<sys/shm.h>
+	<memory.h>
+
+1531707226 /home/sdt/workspace/sdtNewTerminal/include/shmfifo.h
+	<stdio.h>
+	<stdlib.h>
+	<sys/shm.h>
+	<memory.h>
+
+1531451945 /home/sdt/workspace/sdtNewTerminal/include/semtool.h
+	<sys/types.h>
+	<unistd.h>
+	<sys/ipc.h>
+	<sys/sem.h>
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+
+1532567960 source:/home/sdt/workspace/sdtNewTerminal/src/semtool.cpp
+	"semtool.h"
+
+1532506099 source:/home/sdt/workspace/sdtNewTerminal/src/shmfifo.cpp
+	"shmfifo.h"
+	"semtool.h"
+	<assert.h>
 

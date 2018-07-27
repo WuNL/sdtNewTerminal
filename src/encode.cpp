@@ -10,13 +10,8 @@ void quit(const char * msg)
 };
 
 encode::encode(CmdOptions& options):sts(MFX_ERR_NONE),
-    impl(options.values.impl),
-    ver(
-{
-    {
-        0, 1
-    }
-}),
+    impl(MFX_IMPL_HARDWARE),
+    ver({{0,1}}),
 fSink(NULL),
 useVPP(false),
 insertIDR(false)
@@ -46,7 +41,8 @@ int encode::init(CmdOptions& options)
     if(options.values.Bitrate!=CAPTURE_FRAMERATE || options.values.Width!=CAPTURE_WIDTH || options.values.Height!=CAPTURE_HEIGHT)
         useVPP = true;
 
-
+    impl = MFX_IMPL_HARDWARE;
+    ver={{0,1}};
     sts = Initialize(impl, ver, &session, NULL);
     MSDK_CHECK_RESULT(sts, MFX_ERR_NONE, sts);
 
@@ -56,26 +52,46 @@ int encode::init(CmdOptions& options)
     mfxEncParams.mfx.CodecId = options.values.CodecId;
 
     mfxEncParams.mfx.GopOptFlag = MFX_GOP_STRICT;
-    mfxEncParams.mfx.GopPicSize = (mfxU16)1200;
+    mfxEncParams.mfx.GopPicSize = (mfxU16)120;
     mfxEncParams.mfx.IdrInterval = (mfxU16)1;
     mfxEncParams.mfx.GopRefDist = (mfxU16)1;
 
     //取消每帧附带的sei。实际发现取消后容易花屏
+    std::vector<mfxExtBuffer*> m_InitExtParams_ENC;
+    mfxExtCodingOption* pCodingOption = new mfxExtCodingOption;
+    MSDK_ZERO_MEMORY(*pCodingOption);
+    pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
+    pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
+    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
+    pCodingOption->SingleSeiNalUnit =  MFX_CODINGOPTION_OFF;
+    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_OFF;
+    pCodingOption->AUDelimiter = MFX_CODINGOPTION_OFF;
+
+    mfxExtCodingOption2* pCodingOption2 = new mfxExtCodingOption2;
+    MSDK_ZERO_MEMORY(*pCodingOption2);
+    pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
+    pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
+    pCodingOption2->RepeatPPS = MFX_CODINGOPTION_OFF;
+    pCodingOption2->MaxSliceSize = (size_t)1400;
+
+    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
+    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
+
+    mfxEncParams.ExtParam    = m_InitExtParams_ENC.data();
+    mfxEncParams.NumExtParam = (mfxU16)m_InitExtParams_ENC.size();
+
+
 //    std::vector<mfxExtBuffer*> m_InitExtParams_ENC;
-//    mfxExtCodingOption* pCodingOption = new mfxExtCodingOption;
-//    MSDK_ZERO_MEMORY(*pCodingOption);
-//    pCodingOption->Header.BufferId = MFX_EXTBUFF_CODING_OPTION;
-//    pCodingOption->Header.BufferSz = sizeof(mfxExtCodingOption);
-//    pCodingOption->RefPicMarkRep = MFX_CODINGOPTION_OFF;
-//    pCodingOption->NalHrdConformance = MFX_CODINGOPTION_OFF;
 //
 //    mfxExtCodingOption2* pCodingOption2 = new mfxExtCodingOption2;
 //    MSDK_ZERO_MEMORY(*pCodingOption2);
 //    pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
 //    pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
-//    pCodingOption2->RepeatPPS = MFX_CODINGOPTION_OFF;
+//    //pCodingOption2->MaxFrameSize = (size_t)1400;
+//    pCodingOption2->MaxSliceSize = (size_t)1400;
+
 //
-//    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
+//
 //    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
 //
 //    mfxEncParams.ExtParam    = m_InitExtParams_ENC.data();

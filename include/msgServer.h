@@ -13,6 +13,7 @@
 #include <boost/thread/tss.hpp>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/atomic.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/asio/steady_timer.hpp>

@@ -10,6 +10,16 @@
 #include "network.h"
 #include "msgServer.h"
 
+#include "shmfifo.h"
+
+#define BUFFERLEN 1920*1080*3/2
+
+typedef struct videoBuffer
+{
+    int size;
+    char buffer[BUFFERLEN];
+} vb;
+
 class videoPipeline : public observer
 {
 public:
@@ -94,6 +104,9 @@ private:
     pthread_t thread;
     void *cap_buf, *cvt_buf, *hd_buf, *enc_buf, *pac_buf;
     msgServer* sj;
+
+    shmfifo_t *fifo;
+    vb vb_;
 };
 
 #endif // VIDEOPIPELINE_H

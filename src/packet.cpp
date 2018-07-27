@@ -125,12 +125,14 @@ static int get_next_nalu(struct pac_handle *handle)
     if (is_start_code3(handle->next_nalu_ptr))    // check 0x000001 first
     {
         handle->nalu.startcodeprefix_len = 3;
+//        printf("333333333333\n");
     }
     else
     {
         if (is_start_code4(handle->next_nalu_ptr))    // check 0x00000001
         {
             handle->nalu.startcodeprefix_len = 4;
+//            printf("4444444444444\n");
         }
         else
         {
@@ -280,7 +282,7 @@ int h264Packet::pack_get(void **poutbuf, int *outsize)
 
 
 //		dump_nalu(&handle->nalu);
-
+        //printf("handle->seq_num:%d\n",handle->seq_num);
         rtp_hdr->seq_no = htons(handle->seq_num++);    // increase for every RTP packet
         handle->ts_current_sample = (U32) ((get_current_millisec() - handle->ts_start_millisec) * 90.0);    // calculate the timestamp for a new NALU
         rtp_hdr->timestamp = htonl(handle->ts_current_sample);
@@ -569,7 +571,7 @@ int h265Packet::pack_get(void **poutbuf, int *outsize)
             handle->inbuf_complete = 1;
             return 0;
         }
-
+        printf("handle->seq_num:%d\n",handle->seq_num);
         rtp_hdr->seq_no = htons(handle->seq_num++);    // increase for every RTP packet
         handle->ts_current_sample = (U32) ((get_current_millisec() - handle->ts_start_millisec) * 90.0);    // calculate the timestamp for a new NALU
 
