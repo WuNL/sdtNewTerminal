@@ -103,7 +103,7 @@ void videoPipeline::init(CmdOptions& options)
     }
     isReleased = false;
 
-    fifo = shmfifo_init(1234, sizeof(vb), 30);
+    fifo = shmfifo_init(4000, sizeof(vb), 30);
 
 }
 
@@ -142,7 +142,7 @@ void videoPipeline::videoInPipeline()
         cnt++;
         captureDevice->camera_frame_and_decode(timeout,yuvbuffer,width,height);
 
-        sts = encoder->encodeBuffer(yuvbuffer,false);
+        sts = encoder->encodeBuffer(yuvbuffer,true);
 
         //skip a frame; used for 60 fps to 30 fps
         if(MFX_ERR_MORE_DATA==sts)

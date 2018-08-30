@@ -72,30 +72,14 @@ int encode::init(CmdOptions& options)
     pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
     pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
     pCodingOption2->RepeatPPS = MFX_CODINGOPTION_OFF;
-    pCodingOption2->MaxSliceSize = (size_t)1400;
+    if(mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
+        pCodingOption2->MaxSliceSize = (size_t)1400;
 
     m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption));
     m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
 
     mfxEncParams.ExtParam    = m_InitExtParams_ENC.data();
     mfxEncParams.NumExtParam = (mfxU16)m_InitExtParams_ENC.size();
-
-
-//    std::vector<mfxExtBuffer*> m_InitExtParams_ENC;
-//
-//    mfxExtCodingOption2* pCodingOption2 = new mfxExtCodingOption2;
-//    MSDK_ZERO_MEMORY(*pCodingOption2);
-//    pCodingOption2->Header.BufferId = MFX_EXTBUFF_CODING_OPTION2;
-//    pCodingOption2->Header.BufferSz = sizeof(mfxExtCodingOption2);
-//    //pCodingOption2->MaxFrameSize = (size_t)1400;
-//    pCodingOption2->MaxSliceSize = (size_t)1400;
-
-//
-//
-//    m_InitExtParams_ENC.push_back(reinterpret_cast<mfxExtBuffer *>(pCodingOption2));
-//
-//    mfxEncParams.ExtParam    = m_InitExtParams_ENC.data();
-//    mfxEncParams.NumExtParam = (mfxU16)m_InitExtParams_ENC.size();
 
     if(mfxEncParams.mfx.CodecId == MFX_CODEC_AVC)
     {

@@ -339,7 +339,7 @@
 	<iostream>
 	"videoPipeline.h"
 
-1532506435 /home/sdt/workspace/sdtNewTerminal/include/videoPipeline.h
+1533868206 /home/sdt/workspace/sdtNewTerminal/include/videoPipeline.h
 	<pthread.h>
 	<stdio.h>
 	<errno.h>
@@ -432,7 +432,7 @@
 1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/capture.cpp
 	"capture.h"
 
-1532334253 source:/home/sdt/workspace/sdtNewTerminal/src/encode.cpp
+1535425572 source:/home/sdt/workspace/sdtNewTerminal/src/encode.cpp
 	"encode.h"
 
 1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/msgServer.cpp
@@ -451,7 +451,7 @@
 	<sys/timeb.h>
 	<string.h>
 
-1532506243 source:/home/sdt/workspace/sdtNewTerminal/src/videoPipeline.cpp
+1534832452 source:/home/sdt/workspace/sdtNewTerminal/src/videoPipeline.cpp
 	"videoPipeline.h"
 
 1527830977 source:/home/sdt/workspace/sdtNewTerminal/src/vpp.cpp
